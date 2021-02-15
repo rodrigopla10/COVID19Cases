@@ -1,5 +1,6 @@
 ﻿using COVID19Cases.Helper;
 using COVID19Cases.Models;
+using COVID19Cases.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,8 +23,10 @@ namespace COVID19Cases.Controllers
         {
             try
             {
-                List<TopRegion> regions = await _operations.GetTopRegionCovidAsync();
-                return View(regions);
+                TopRegionViewModel vModelTop = new TopRegionViewModel();
+                vModelTop = await _operations.GetTopRegionCovidAsync();
+
+                return View(vModelTop);
             }
             catch (Exception ex)
             {

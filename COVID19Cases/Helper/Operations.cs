@@ -5,15 +5,16 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using COVID19Cases.ViewModel;
 
 namespace COVID19Cases.Helper
 {
     public class Operations : IOperations
     {
-        public async Task<List<TopRegion>> GetTopRegionCovidAsync()
+        public async Task<TopRegionViewModel> GetTopRegionCovidAsync()
         {
 
-            List<TopRegion> regions = new List<TopRegion>();
+            TopRegionViewModel regVM = new TopRegionViewModel();
             var client = new HttpClient();
             Helper.CovidAPI api = new Helper.CovidAPI();
 
@@ -28,6 +29,8 @@ namespace COVID19Cases.Helper
 
                     var desRegResponse = JsonConvert.DeserializeObject<RegionResponse.Root>(apiResponseStr.Replace(System.Environment.NewLine, string.Empty));
 
+                    regVM.regions = desRegResponse.data;
+
                     List<ReportResponse.Report> lstReportAll = new List<ReportResponse.Report>();
 
                     request = api.ApiReportRequest();
@@ -40,18 +43,16 @@ namespace COVID19Cases.Helper
                         lstReportAll.AddRange(desRepResponse.data);
                     }
 
-                    var result =(from r in lstReportAll
-                                  group r by new { r.region.iso } into rr
+                    var result = (from r in lstReportAll
+                                  group r by new { r.region.name } into rr
                                   select new TopRegion
                                   {
-                                      Region = rr.Key.iso,
+                                      Region = rr.Key.name,
                                       Cases = rr.Sum(s => s.confirmed),
-                                      Deaths = rr.Sum(s => s.deaths)                                                                          
+                                      Deaths = rr.Sum(s => s.deaths)
                                   }).OrderByDescending(s => s.Cases).Take(10);
 
-
-
-                    regions = result.ToList();
+                    regVM.topRegions = result.ToList();
                 }
             }
             catch (Exception ex)
@@ -59,7 +60,7 @@ namespace COVID19Cases.Helper
                 ex.Message.ToString();
             }
 
-            return regions;
+            return regVM;
         }
     }
 }

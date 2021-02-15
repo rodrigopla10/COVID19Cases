@@ -1,4 +1,4 @@
-﻿@model IEnumerable<COVID19Cases.Models.TopRegion>
+﻿@model COVID19Cases.ViewModel.TopRegionViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -7,41 +7,45 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+<select class="form-control" asp-for="iso"
+        asp-items="@(new SelectList(Model.regions, "iso", "name"))">
+    <option>Select a region</option>
+</select>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Region)
+                Region
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cases)
+                Cases
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Deaths)
+                Deaths
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Region)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cases)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deaths)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.topRegions)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Region)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cases)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Deaths)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
