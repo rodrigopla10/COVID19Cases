@@ -33,7 +33,7 @@ namespace COVID19Cases.Helper
             return request;
         }
 
-        public HttpRequestMessage ApiReportRequest()
+        public HttpRequestMessage ApiReportRegRequest()
         {
             var today= DateTime.Today;
             var yesterday = today.AddDays(-1);
@@ -42,6 +42,23 @@ namespace COVID19Cases.Helper
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri($"https://covid-19-statistics.p.rapidapi.com/reports?date={yesterday.ToString("yyyy-MM-dd")}"),
+            };
+
+            request.Headers.Add("x-rapidapi-key", configuration.GetSection("x-rapidapi-key").Value);
+            request.Headers.Add("x-rapidapi-host", configuration.GetSection("x-rapidapi-host").Value);
+
+            return request;
+        }
+
+        public HttpRequestMessage ApiReportProvRequest(string iso)
+        {
+            var today = DateTime.Today;
+            var yesterday = today.AddDays(-1);
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"https://covid-19-statistics.p.rapidapi.com/reports?iso={iso}&date={yesterday.ToString("yyyy-MM-dd")}"),
             };
 
             request.Headers.Add("x-rapidapi-key", configuration.GetSection("x-rapidapi-key").Value);

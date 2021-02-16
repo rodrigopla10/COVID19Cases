@@ -9,6 +9,8 @@ namespace COVID19Cases.Helper
 {
     public interface IOperations
     {
-        Task<TopRegionViewModel> GetTopRegionCovidAsync();
+        Task<TopRegionViewModel> GetTopRegionCovid();
+
+        Task<TopProvinceViewModel> GetTopProvinceCovid(string iso);
     }
 }

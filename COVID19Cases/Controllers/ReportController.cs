@@ -24,7 +24,7 @@ namespace COVID19Cases.Controllers
             try
             {
                 TopRegionViewModel vModelTop = new TopRegionViewModel();
-                vModelTop = await _operations.GetTopRegionCovidAsync();
+                vModelTop = await _operations.GetTopRegionCovid();
 
                 return View(vModelTop);
             }
@@ -34,5 +34,23 @@ namespace COVID19Cases.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ReportByRegion(string iso)
+        {
+            try
+            {
+                TopProvinceViewModel vModelTop = new TopProvinceViewModel();
+                vModelTop = await _operations.GetTopProvinceCovid(iso);
+
+                return View(vModelTop);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
     }
 }

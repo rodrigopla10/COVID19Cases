@@ -1,0 +1,41 @@
+﻿@model COVID19Cases.ViewModel.TopProvinceViewModel
+
+@{
+    ViewData["Title"] = "ReportByRegion";
+}
+
+<h1>Top 10 provinces</h1>
+<br />
+<br />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Province
+            </th>
+            <th>
+                Cases
+            </th>
+            <th>
+                Deaths
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.topProvinces)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Province)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cases)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Deaths)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

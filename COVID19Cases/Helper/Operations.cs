@@ -11,12 +11,13 @@ namespace COVID19Cases.Helper
 {
     public class Operations : IOperations
     {
-        public async Task<TopRegionViewModel> GetTopRegionCovidAsync()
+        private readonly HttpClient client = new HttpClient();
+        private readonly Helper.CovidAPI api = new Helper.CovidAPI();
+
+        public async Task<TopRegionViewModel> GetTopRegionCovid()
         {
 
             TopRegionViewModel regVM = new TopRegionViewModel();
-            var client = new HttpClient();
-            Helper.CovidAPI api = new Helper.CovidAPI();
 
             try
             {
@@ -33,7 +34,7 @@ namespace COVID19Cases.Helper
 
                     List<ReportResponse.Report> lstReportAll = new List<ReportResponse.Report>();
 
-                    request = api.ApiReportRequest();
+                    request = api.ApiReportRegRequest();
 
                     using (var response2 = await client.SendAsync(request))
                     {
@@ -61,6 +62,35 @@ namespace COVID19Cases.Helper
             }
 
             return regVM;
+        }
+
+        public async Task<TopProvinceViewModel> GetTopProvinceCovid(string iso)
+        {
+            TopProvinceViewModel provVM = new TopProvinceViewModel();
+
+            List<ReportResponse.Report> lstReportAll = new List<ReportResponse.Report>();
+            HttpRequestMessage request = api.ApiReportProvRequest(iso);
+
+            using (var response = await client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                string apiResponseStr = await response.Content.ReadAsStringAsync();
+                var desRepResponse = JsonConvert.DeserializeObject<ReportResponse.Root>(apiResponseStr.Replace(System.Environment.NewLine, string.Empty));
+                lstReportAll.AddRange(desRepResponse.data);
+            }
+
+            var result = (from p in lstReportAll
+                          group p by new { p.region.province } into rr
+                          select new TopProvince
+                          {
+                              Province = rr.Key.province,
+                              Cases = rr.Sum(s => s.confirmed),
+                              Deaths = rr.Sum(s => s.deaths)
+                          }).OrderByDescending(s => s.Cases).Take(10);
+
+            provVM.topProvinces = result.ToList();
+
+            return provVM;
         }
     }
 }
